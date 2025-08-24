@@ -3,7 +3,7 @@ import { IUser, User } from '@/models';
 
 class UserRepository implements UserRepositoryImpl {
   async getUserByID(userID: string): Promise<IUser | null> {
-    return User.findById(userID);
+    return await User.findOne({ id: userID });
   }
 
   async createUser(user: IUser): Promise<IUser> {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IFile extends Document {
@@ -15,6 +16,11 @@ export interface IFile extends Document {
 
 const FileSchema = new Schema<IFile>(
   {
+    id: {
+      type: String,
+      required: [true, 'File ID is required'],
+      unique: true,
+    },
     bucketId: {
       type: String,
       required: [true, 'Bucket ID is required'],
@@ -58,5 +64,6 @@ const FileSchema = new Schema<IFile>(
 FileSchema.index({ bucketId: 1 });
 FileSchema.index({ name: 1 });
 FileSchema.index({ createdAt: -1 });
+FileSchema.index({ id: 1 });
 
 export const File = mongoose.model<IFile>('File', FileSchema);

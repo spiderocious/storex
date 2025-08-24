@@ -14,6 +14,7 @@ export const configs = {
   app: {
     port: process.env.PORT || 3000,
     env: process.env.NODE_ENV || 'development',
+    name: process.env.APP_NAME || 'STOREX',
   },
   db: {
     uri: process.env.MONGODB_URI || 'mongodb://localhost:27017/file-service',

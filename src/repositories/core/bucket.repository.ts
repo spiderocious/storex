@@ -3,7 +3,7 @@ import { IBucket, Bucket } from '@/models';
 
 class BucketRepository implements BucketRepositoryImpl {
   async getBucketByID(bucketID: string): Promise<IBucket | null> {
-    return Bucket.findById(bucketID);
+    return Bucket.findOne({ id: bucketID });
   }
 
   async createBucket(bucket: IBucket): Promise<IBucket> {

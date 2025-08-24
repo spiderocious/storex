@@ -3,7 +3,7 @@ import { IFile, File } from '@/models';
 
 class FileRepository implements FileRepositoryImpl {
   async getFileByID(fileID: string): Promise<IFile | null> {
-    return File.findById(fileID);
+    return File.findOne({ id: fileID });
   }
 
   async createFile(file: IFile): Promise<IFile> {

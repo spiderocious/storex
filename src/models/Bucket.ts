@@ -17,6 +17,11 @@ export interface IBucket extends Document {
 
 const BucketSchema = new Schema<IBucket>(
   {
+    id: {
+      type: String,
+      required: [true, 'Bucket ID is required'],
+      unique: true,
+    },
     name: {
       type: String,
       required: [true, 'Bucket name is required'],

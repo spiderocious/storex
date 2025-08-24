@@ -2,6 +2,7 @@ import { FileServiceImpl, CreateFileRequest, UpdateFileRequest } from '../impl/f
 import { fileRepository } from '@/repositories/core/file.repository';
 import { bucketRepository } from '@/repositories/core/bucket.repository';
 import { IFile } from '@/models';
+import { generateAppID } from '@/utils/id';
 
 class FileService implements FileServiceImpl {
   async createFile(fileData: CreateFileRequest): Promise<IFile> {
@@ -30,6 +31,7 @@ class FileService implements FileServiceImpl {
 
     // Create file
     const newFile = await fileRepository.createFile({
+      id: generateAppID('FILE'),
       bucketId,
       name,
       originalName,

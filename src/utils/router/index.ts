@@ -10,7 +10,7 @@ export type RouteHandlerType = {
   handler: RequestHandler;
 };
 
-export function getRouter(
+export function createRouter(
   routes: RouteHandlerType[],
   prefix: string = '',
   suffix: string = '',

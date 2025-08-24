@@ -29,20 +29,13 @@
       "@/routes/*": ["src/routes/*"],
       "@/utils/*": ["src/utils/*"],
       "@/types/*": ["src/types/*"],
-      "@/tests/*": ["tests/*"],
+      "@/tests/*": ["tests/*"]
     },
-    "typeRoots": ["./node_modules/@types", "./src/types"],
+    "typeRoots": ["./node_modules/@types", "./types", "./src/types", "./src/@types"],
     "types": ["node", "jest"]
   },
-  "include": [
-    "src/**/*",
-    "tests/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "coverage"
-  ],
+  "include": ["src/**/*", "tests/**/*", "types/**/*"],
+  "exclude": ["node_modules", "dist", "coverage"],
   "ts-node": {
     "require": ["tsconfig-paths/register"],
     "esm": false,

@@ -9,6 +9,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
 import { validateR2Config } from './services/util/r2';
+import { router } from './routes';
 
 dotEnvConfig();
 
@@ -41,6 +42,8 @@ app.use((req: Request, _, next: any) => {
   logger.log(`${req.method} ${req.url}`);
   next();
 });
+
+app.use(router);
 
 // Health check endpoint
 app.get('/api/status', (_req, res) => {

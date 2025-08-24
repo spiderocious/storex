@@ -1,5 +1,5 @@
 import { Router, RequestHandler } from 'express';
-import { getRouter, RouteHandlerType, HttpMethod } from '@/utils/router';
+import { createRouter, RouteHandlerType, HttpMethod } from '@/utils/router';
 
 // Mock Express Router
 jest.mock('express', () => ({
@@ -12,7 +12,7 @@ jest.mock('express', () => ({
   })),
 }));
 
-describe('getRouter Utility', () => {
+describe('createRouter Utility', () => {
   let mockRouter: any;
   let mockHandler: RequestHandler;
   let mockMiddleware1: RequestHandler;
@@ -43,7 +43,7 @@ describe('getRouter Utility', () => {
   describe('Basic Functionality', () => {
     it('should create a router instance', () => {
       const routes: RouteHandlerType[] = [];
-      const router = getRouter(routes);
+      const router = createRouter(routes);
 
       expect(Router).toHaveBeenCalled();
       expect(router).toBe(mockRouter);
@@ -58,7 +58,7 @@ describe('getRouter Utility', () => {
         { method: 'patch', path: '/users/:id', handler: mockHandler },
       ];
 
-      getRouter(routes);
+      createRouter(routes);
 
       expect(mockRouter.get).toHaveBeenCalledWith('/users', mockHandler);
       expect(mockRouter.post).toHaveBeenCalledWith('/users', mockHandler);
@@ -69,7 +69,7 @@ describe('getRouter Utility', () => {
 
     it('should handle empty routes array', () => {
       const routes: RouteHandlerType[] = [];
-      getRouter(routes);
+      createRouter(routes);
 
       expect(mockRouter.get).not.toHaveBeenCalled();
       expect(mockRouter.post).not.toHaveBeenCalled();
@@ -86,7 +86,7 @@ describe('getRouter Utility', () => {
         { method: 'post', path: '/posts', handler: mockHandler },
       ];
 
-      getRouter(routes, '/api');
+      createRouter(routes, '/api');
 
       expect(mockRouter.get).toHaveBeenCalledWith('/api/users', mockHandler);
       expect(mockRouter.post).toHaveBeenCalledWith('/api/posts', mockHandler);
@@ -98,7 +98,7 @@ describe('getRouter Utility', () => {
         { method: 'post', path: '/posts', handler: mockHandler },
       ];
 
-      getRouter(routes, '', '/v1');
+      createRouter(routes, '', '/v1');
 
       expect(mockRouter.get).toHaveBeenCalledWith('/users/v1', mockHandler);
       expect(mockRouter.post).toHaveBeenCalledWith('/posts/v1', mockHandler);
@@ -107,7 +107,7 @@ describe('getRouter Utility', () => {
     it('should apply both prefix and suffix to routes', () => {
       const routes: RouteHandlerType[] = [{ method: 'get', path: '/users', handler: mockHandler }];
 
-      getRouter(routes, '/api', '/v1');
+      createRouter(routes, '/api', '/v1');
 
       expect(mockRouter.get).toHaveBeenCalledWith('/api/users/v1', mockHandler);
     });
@@ -115,7 +115,7 @@ describe('getRouter Utility', () => {
     it('should handle empty prefix and suffix', () => {
       const routes: RouteHandlerType[] = [{ method: 'get', path: '/users', handler: mockHandler }];
 
-      getRouter(routes, '', '');
+      createRouter(routes, '', '');
 
       expect(mockRouter.get).toHaveBeenCalledWith('/users', mockHandler);
     });
@@ -126,7 +126,7 @@ describe('getRouter Utility', () => {
         { method: 'get', path: '/posts/:postId/comments/:commentId', handler: mockHandler },
       ];
 
-      getRouter(routes, '/api');
+      createRouter(routes, '/api');
 
       expect(mockRouter.get).toHaveBeenCalledWith('/api/users/:id', mockHandler);
       expect(mockRouter.get).toHaveBeenCalledWith(
@@ -143,7 +143,7 @@ describe('getRouter Utility', () => {
         { method: 'post', path: '/users', handler: mockHandler },
       ];
 
-      getRouter(routes, '', '', [mockMiddleware1, mockMiddleware2]);
+      createRouter(routes, '', '', [mockMiddleware1, mockMiddleware2]);
 
       expect(mockRouter.get).toHaveBeenCalledWith(
         '/users',
@@ -169,7 +169,7 @@ describe('getRouter Utility', () => {
         },
       ];
 
-      getRouter(routes);
+      createRouter(routes);
 
       expect(mockRouter.get).toHaveBeenCalledWith('/users', mockRouteMiddleware, mockHandler);
     });
@@ -184,7 +184,7 @@ describe('getRouter Utility', () => {
         },
       ];
 
-      getRouter(routes, '', '', [mockMiddleware1, mockMiddleware2]);
+      createRouter(routes, '', '', [mockMiddleware1, mockMiddleware2]);
 
       expect(mockRouter.get).toHaveBeenCalledWith(
         '/users',
@@ -198,7 +198,7 @@ describe('getRouter Utility', () => {
     it('should handle routes without middlewares', () => {
       const routes: RouteHandlerType[] = [{ method: 'get', path: '/users', handler: mockHandler }];
 
-      getRouter(routes);
+      createRouter(routes);
 
       expect(mockRouter.get).toHaveBeenCalledWith('/users', mockHandler);
     });
@@ -208,7 +208,7 @@ describe('getRouter Utility', () => {
         { method: 'get', path: '/users', middlewares: [], handler: mockHandler },
       ];
 
-      getRouter(routes, '', '', []);
+      createRouter(routes, '', '', []);
 
       expect(mockRouter.get).toHaveBeenCalledWith('/users', mockHandler);
     });
@@ -236,7 +236,7 @@ describe('getRouter Utility', () => {
         },
       ];
 
-      getRouter(routes, '/api', '/v1', [mockMiddleware2]);
+      createRouter(routes, '/api', '/v1', [mockMiddleware2]);
 
       expect(mockRouter.get).toHaveBeenCalledWith('/api/public/v1', mockMiddleware2, mockHandler);
       expect(mockRouter.post).toHaveBeenCalledWith(
@@ -260,7 +260,7 @@ describe('getRouter Utility', () => {
         { method: 'get', path: '/search*', handler: mockHandler },
       ];
 
-      getRouter(routes, '/api');
+      createRouter(routes, '/api');
 
       expect(mockRouter.get).toHaveBeenCalledWith(
         '/api/files/:filename([a-zA-Z0-9._-]+)',
@@ -275,7 +275,7 @@ describe('getRouter Utility', () => {
         { method: 'get', path: '', handler: mockHandler },
       ];
 
-      getRouter(routes, '/api');
+      createRouter(routes, '/api');
 
       expect(mockRouter.get).toHaveBeenCalledWith('/api/', mockHandler);
       expect(mockRouter.get).toHaveBeenCalledWith('/api', mockHandler);
@@ -289,7 +289,7 @@ describe('getRouter Utility', () => {
       httpMethods.forEach(method => {
         const routes: RouteHandlerType[] = [{ method, path: '/test', handler: mockHandler }];
 
-        expect(() => getRouter(routes)).not.toThrow();
+        expect(() => createRouter(routes)).not.toThrow();
       });
     });
 
@@ -308,7 +308,7 @@ describe('getRouter Utility', () => {
         { method: 'get', path: '/sync', handler: syncHandler },
       ];
 
-      expect(() => getRouter(routes)).not.toThrow();
+      expect(() => createRouter(routes)).not.toThrow();
       expect(mockRouter.get).toHaveBeenCalledTimes(2);
     });
   });
@@ -319,7 +319,7 @@ describe('getRouter Utility', () => {
         { method: 'get', path: '/users', middlewares: undefined, handler: mockHandler },
       ];
 
-      getRouter(routes);
+      createRouter(routes);
 
       expect(mockRouter.get).toHaveBeenCalledWith('/users', mockHandler);
     });
@@ -331,7 +331,7 @@ describe('getRouter Utility', () => {
         { method: 'put', path: '/users', handler: mockHandler },
       ];
 
-      getRouter(routes);
+      createRouter(routes);
 
       expect(mockRouter.get).toHaveBeenCalledWith('/users', mockHandler);
       expect(mockRouter.post).toHaveBeenCalledWith('/users', mockHandler);
@@ -346,7 +346,7 @@ describe('getRouter Utility', () => {
         { method: 'get', path: '/users', middlewares: routeMiddlewares, handler: mockHandler },
       ];
 
-      getRouter(routes, '', '', middlewares);
+      createRouter(routes, '', '', middlewares);
 
       expect(mockRouter.get).toHaveBeenCalledWith(
         '/users',
@@ -362,7 +362,7 @@ describe('getRouter Utility', () => {
     it('should return the configured router instance', () => {
       const routes: RouteHandlerType[] = [{ method: 'get', path: '/test', handler: mockHandler }];
 
-      const router = getRouter(routes);
+      const router = createRouter(routes);
 
       expect(router).toBe(mockRouter);
       expect(Router).toHaveBeenCalledTimes(1);
@@ -371,8 +371,8 @@ describe('getRouter Utility', () => {
     it('should return a new router instance on each call', () => {
       const routes: RouteHandlerType[] = [];
 
-      const router1 = getRouter(routes);
-      const router2 = getRouter(routes);
+      const router1 = createRouter(routes);
+      const router2 = createRouter(routes);
 
       expect(Router).toHaveBeenCalledTimes(2);
       expect(router1).toBe(mockRouter);

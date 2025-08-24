@@ -92,10 +92,10 @@ export const authControllerWrapper = (controllerFn: ControllerFunction) =>
       condition: msg => msg.includes('email') && msg.includes('already'),
       handler: res => ConflictResponse(res, 'Email already registered'),
     },
-    {
-      condition: msg => msg.includes('login') || msg.includes('credentials'),
-      handler: res => UnauthorizedResponse(res, 'Invalid login credentials'),
-    },
+    // {
+    //   condition: msg => msg.includes('login') || msg.includes('credentials'),
+    //   handler: res => UnauthorizedResponse(res, 'Invalid login credentials'),
+    // },
   ]);
 
 export const resourceControllerWrapper = (controllerFn: ControllerFunction) =>

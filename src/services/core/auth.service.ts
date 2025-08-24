@@ -7,6 +7,7 @@ import {
 import { userRepository } from '@/repositories/core/user.repository';
 import { IUser } from '@/models';
 import { JWTUtils } from '@/utils/jwt';
+import { generateAppID } from '@/utils/id';
 
 class AuthService implements AuthServiceImpl {
   async login(loginData: LoginRequest): Promise<AuthResponse> {
@@ -15,13 +16,13 @@ class AuthService implements AuthServiceImpl {
     // Find user by email
     const user = await userRepository.getUserByEmail(email);
     if (!user) {
-      throw new Error('Invalid credentials');
+      throw new Error('Invalid credentials.');
     }
 
     // Verify password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials');
+      throw new Error('Invalid credentials..');
     }
 
     // Generate JWT token
@@ -45,6 +46,7 @@ class AuthService implements AuthServiceImpl {
 
     // Create new user
     const userData = {
+      id: generateAppID('USER'),
       email,
       password,
     } as IUser;

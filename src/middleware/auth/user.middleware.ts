@@ -5,7 +5,7 @@ import { UnauthorizedResponse } from '@/utils/response';
 import { NextFunction, Response } from 'express';
 
 export const LoggedInMiddleware = async (req: any, res: Response, next: NextFunction) => {
-  const token = JWTUtils.extractTokenFromHeader(req);
+  const token = JWTUtils.extractTokenFromHeader(req?.headers?.authorization);
   if (!token) {
     return UnauthorizedResponse(res);
   }
