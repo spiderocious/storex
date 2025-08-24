@@ -17,6 +17,15 @@ class UserRepository implements UserRepositoryImpl {
   async getUserByEmail(email: string): Promise<IUser | null> {
     return User.findOne({ email });
   }
+
+  async deleteUser(userID: string): Promise<boolean> {
+    const result = await User.findByIdAndDelete(userID);
+    return result !== null;
+  }
+
+  async getAllUsers(): Promise<IUser[]> {
+    return User.find({}).sort({ createdAt: -1 });
+  }
 }
 
 export const userRepository = new UserRepository();

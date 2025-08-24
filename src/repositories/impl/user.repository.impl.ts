@@ -5,4 +5,6 @@ export interface UserRepositoryImpl {
   createUser(user: IUser): Promise<IUser>;
   updateUser(userID: string, user: Partial<IUser>): Promise<IUser | null>;
   getUserByEmail(email: string): Promise<IUser | null>;
+  deleteUser(userID: string): Promise<boolean>;
+  getAllUsers(): Promise<IUser[]>;
 }
