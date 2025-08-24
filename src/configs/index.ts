@@ -1,3 +1,7 @@
+import { config as dotEnvConfig } from 'dotenv';
+
+dotEnvConfig();
+
 export const configs = {
   app: {
     port: process.env.PORT || 3000,

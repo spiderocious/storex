@@ -2,13 +2,12 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
-import dotenv from 'dotenv';
+import { config as dotEnvConfig } from 'dotenv';
 import mongoose from 'mongoose';
 import { configs } from '@/configs';
 import { logger } from '@/utils';
 
-// Load environment variables
-dotenv.config();
+dotEnvConfig();
 
 const app = express();
 const PORT = configs.app.port;
@@ -29,7 +28,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Health check endpoint
-app.get('/status', (_req, res) => {
+app.get('/api/status', (_req, res) => {
   res.json({
     success: true,
     timestamp: new Date().toISOString(),
