@@ -4,12 +4,13 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
+import { configs } from '@/configs';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = configs.app.port;
 
 // Security middleware
 app.use(helmet());
@@ -17,8 +18,8 @@ app.use(cors());
 
 // Rate limiting
 const limiter = rateLimit({
-  windowMs: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000'), // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '100'), // limit each IP to 100 requests per windowMs
+  windowMs: configs.rateLimit.windowMs,
+  max: configs.rateLimit.max,
   message: 'Too many requests from this IP, please try again later.',
 });
 app.use(limiter);
@@ -39,7 +40,7 @@ app.get('/status', (_req, res) => {
 // MongoDB connection
 const connectDB = async () => {
   try {
-    const mongoUri = process.env.MONGODB_URI || 'mongodb://localhost:27017/file-service';
+    const mongoUri = configs.db.uri;
     await mongoose.connect(mongoUri);
     console.log('MongoDB connected successfully');
   } catch (error) {
@@ -55,7 +56,7 @@ const startServer = async () => {
 
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
-      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Environment: ${configs.app.env}`);
     });
   } catch (error) {
     console.error('Failed to start server:', error);
