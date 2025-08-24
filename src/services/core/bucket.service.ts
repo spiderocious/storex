@@ -48,6 +48,8 @@ class BucketService implements BucketServiceImpl {
       uploadCount: 0,
       totalSize: 0,
       fileCount: 0,
+      publicKey: generateAppID('BUCKET_PUBLIC'),
+      privateKey: generateAppID('BUCKET_PRIVATE'),
     } as IBucket);
 
     return newBucket;

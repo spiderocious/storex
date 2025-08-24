@@ -16,13 +16,13 @@ class AuthService implements AuthServiceImpl {
     // Find user by email
     const user = await userRepository.getUserByEmail(email);
     if (!user) {
-      throw new Error('Invalid credentials.');
+      throw new Error('Invalid credentials');
     }
 
     // Verify password
     const isPasswordValid = await user.comparePassword(password);
     if (!isPasswordValid) {
-      throw new Error('Invalid credentials..');
+      throw new Error('Invalid credentials');
     }
 
     // Generate JWT token

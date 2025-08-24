@@ -1,5 +1,4 @@
 import mongoose, { Document, Schema } from 'mongoose';
-import { v4 as uuidv4 } from 'uuid';
 
 export interface IBucket extends Document {
   _id: string;
@@ -69,16 +68,6 @@ const BucketSchema = new Schema<IBucket>(
     timestamps: true,
   }
 );
-
-BucketSchema.pre<IBucket>('save', function (next) {
-  if (!this.publicKey) {
-    this.publicKey = `pub_${uuidv4().replace(/-/g, '')}`;
-  }
-  if (!this.privateKey) {
-    this.privateKey = `prv_${uuidv4().replace(/-/g, '')}`;
-  }
-  next();
-});
 
 // Indexes for better query performance
 BucketSchema.index({ ownerId: 1 });

@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { IBucket } from '@/models';
 
 export interface AuthenticatedUser {
   id: string;
@@ -13,4 +14,9 @@ export interface AuthenticatedRequest extends Request {
 
 export interface RequiredAuthRequest extends Request {
   user: AuthenticatedUser;
+}
+
+export interface PublicKeyRequest extends Request {
+  bucket?: IBucket;
+  publicKey?: string;
 }

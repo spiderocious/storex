@@ -3,6 +3,7 @@ import bcrypt from 'bcrypt';
 
 export interface IUser extends Document {
   _id: string;
+  id: string;
   email: string;
   password: string;
   createdAt: Date;
@@ -38,6 +39,13 @@ const UserSchema = new Schema<IUser>(
     timestamps: true,
   }
 );
+
+// instance method pre save to encrypt password
+UserSchema.pre('save', async function (next) {
+  const salt = await bcrypt.genSalt(10);
+  this.password = await bcrypt.hash(this.password, salt);
+  next();
+});
 
 // Instance method to compare passwords
 UserSchema.methods.comparePassword = async function (candidatePassword: string): Promise<boolean> {

@@ -22,7 +22,10 @@ export const LoggedInMiddleware = async (req: any, res: Response, next: NextFunc
     return UnauthorizedResponse(res);
   }
 
+  req.user = user;
+
   req.headers.user = user;
+  req.headers.id = userID;
   req.headers.userID = userID;
   return next();
 };

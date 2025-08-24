@@ -21,6 +21,6 @@
 
 #### File Operations
 
-- `POST /api/v1/public/file/upload` - Get upload URL for Cloudflare R2 (requires public key)
+- `POST /api/v1/public/file/upload-uri` - Get upload URL for Cloudflare R2 (requires public key)
 - `GET /api/v1/public/file/download` - Get download URL from Cloudflare R2 (requires public key)
-- `GET /api/v1/public/files` - List files for bucket (requires private key)
+- `POST /api/v1/public/file/upload` - Upload file to Cloudflare R2 (requires public key)
