@@ -13,6 +13,28 @@ The system follows Domain-Driven Design (DDD) principles with a clear separation
 - **Controllers**: Handle HTTP requests and orchestrate business logic
 - **Services**: Contain business logic and domain operations
 - **Repositories**: Handle data access and persistence
+- **Background Jobs**: Handle asynchronous operations to avoid blocking main requests
+
+### Folder Structure
+```
+src/
+├── server.ts              # Application entry point
+├── routes/                 # Route definitions
+├── middleware/             # Custom middleware functions
+├── controllers/            # Request handlers
+├── services/              # Business logic
+│   └── background/        # Background job service
+├── repositories/          # Data access layer
+├── models/                # Database models
+└── utils/                 # Utility functions
+
+docs/                      # Documentation
+tests/                     # Test files
+├── unit/                  # Unit tests
+├── integration/           # Integration tests
+├── functional/            # Functional tests
+└── e2e/                   # End-to-end tests
+```
 
 ### System Architecture
 
@@ -30,14 +52,32 @@ The system follows Domain-Driven Design (DDD) principles with a clear separation
 
 ## Tech Stack
 
+### Core Stack
 - **Runtime**: Node.js
 - **Framework**: Express.js
 - **Language**: TypeScript
-- **Database**: MongoDB
-- **File Storage**: Cloudflare R2
-- **Authentication**: JWT tokens
+- **Database**: MongoDB (with Mongoose ODM)
+- **File Storage**: Cloudflare R2 (via AWS SDK)
+- **Authentication**: JWT tokens (jsonwebtoken)
 - **Authorization**: Public/Private key pairs per bucket
-- **Caching**: In-memory cache for key validation
+
+### Dependencies
+- **Validation**: Zod for schema validation
+- **Rate Limiting**: express-rate-limit
+- **Security**: Helmet for security headers
+- **CORS**: cors for cross-origin resource sharing
+- **Environment**: dotenv for configuration
+- **UUID**: uuid for unique identifiers
+- **AWS SDK**: @aws-sdk/client-s3 and @aws-sdk/s3-request-presigner
+- **Path Mapping**: tsconfig-paths for module resolution
+
+### Development Tools
+- **Testing**: Jest for unit, integration, functional, and e2e tests
+- **Code Quality**: ESLint for linting
+- **Formatting**: Prettier for code formatting
+- **Git Hooks**: Husky for pre-commit hooks
+- **Staged Files**: lint-staged for running linters on pre-committed files
+- **Type Checking**: TypeScript compiler
 
 ## Data Models
 
@@ -150,7 +190,8 @@ sequenceDiagram
     API->>API: Validate public key
     API->>R2: Generate pre-signed download URL
     API->>Client: Return download URL
-    API->>DB: Increment download counter (behind the scenes)
+    API->>Background: Queue increment download counter job
+    Client->>R2: Download file from URL
 ```
 
 ## Security Considerations
@@ -165,7 +206,9 @@ sequenceDiagram
 - All passwords are hashed using bcrypt
 - JWT tokens have expiration times
 - Pre-signed URLs have limited validity periods
-- Input validation on all endpoints
+- Comprehensive input validation using Zod schemas
+- Rate limiting to prevent abuse
+- Security headers via Helmet middleware
 
 ### Access Control
 - Bucket-level isolation using key pairs
@@ -173,6 +216,27 @@ sequenceDiagram
 - Rate limiting should be implemented (future enhancement)
 
 ## Performance Considerations
+
+### Background Job Service
+- **Non-blocking Operations**: Download counter increments handled asynchronously
+- **Flexible Scheduling**: Support for immediate, delayed, and scheduled execution
+- **API Examples**:
+  ```typescript
+  // Execute immediately in background
+  backgroundJobService.execute(() => {
+    // Callback function
+  });
+  
+  // Execute after delay
+  backgroundJobService.executeAfter(5000, () => {
+    // Callback function
+  });
+  
+  // Execute at specific time
+  backgroundJobService.executeBy("2023-01-01T00:00:00Z", () => {
+    // Callback function
+  });
+  ```
 
 ### Caching Strategy
 - Public/private key validation cached in memory
@@ -210,7 +274,10 @@ CLOUDFLARE_ACCOUNT_ID=...
 CLOUDFLARE_ACCESS_KEY_ID=...
 CLOUDFLARE_SECRET_ACCESS_KEY=...
 R2_BUCKET_NAME=...
+R2_ENDPOINT=...
 JWT_SECRET=...
+RATE_LIMIT_WINDOW_MS=900000
+RATE_LIMIT_MAX_REQUESTS=100
 ```
 
 ### Docker Configuration
@@ -264,11 +331,27 @@ npm run build
 npm run dev
 ```
 
-### Testing
+### Testing Strategy
+- **Unit Tests**: Test individual functions and components
+- **Integration Tests**: Test service integrations (DB, R2, etc.)
+- **Functional Tests**: Test complete user workflows
+- **E2E Tests**: Test complete system functionality
+
 ```bash
-npm run test
-npm run test:integration
-npm run test:coverage
+npm run test              # Run all tests
+npm run test:unit         # Unit tests only
+npm run test:integration  # Integration tests only
+npm run test:functional   # Functional tests only
+npm run test:e2e          # End-to-end tests only
+npm run test:coverage     # Generate coverage report
+```
+
+### Code Quality
+```bash
+npm run lint              # Run ESLint
+npm run lint:fix          # Fix linting issues
+npm run format            # Run Prettier
+npm run type-check        # TypeScript type checking
 ```
 
 ## API Response Formats
