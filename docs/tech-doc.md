@@ -148,10 +148,9 @@ sequenceDiagram
 
     Client->>API: GET /api/file/download (file key + public key)
     API->>API: Validate public key
-    API->>DB: Increment download counter
     API->>R2: Generate pre-signed download URL
     API->>Client: Return download URL
-    Client->>R2: Download file from URL
+    API->>DB: Increment download counter (behind the scenes)
 ```
 
 ## Security Considerations
