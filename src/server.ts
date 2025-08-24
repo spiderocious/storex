@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import { configs } from '@/configs';
+import { logger } from '@/utils';
 
 // Load environment variables
 dotenv.config();
@@ -12,7 +13,6 @@ dotenv.config();
 const app = express();
 const PORT = configs.app.port;
 
-// Security middleware
 app.use(helmet());
 app.use(cors());
 
@@ -32,7 +32,6 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/status', (_req, res) => {
   res.json({
     success: true,
-    message: 'File Service Infrastructure is running',
     timestamp: new Date().toISOString(),
   });
 });
@@ -42,9 +41,9 @@ const connectDB = async () => {
   try {
     const mongoUri = configs.db.uri;
     await mongoose.connect(mongoUri);
-    console.log('MongoDB connected successfully');
+    logger.log('MongoDB connected successfully');
   } catch (error) {
-    console.error('MongoDB connection error:', error);
+    logger.error('MongoDB connection error:', error);
     process.exit(1);
   }
 };
@@ -55,11 +54,11 @@ const startServer = async () => {
     await connectDB();
 
     app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-      console.log(`Environment: ${configs.app.env}`);
+      logger.log(`Server is running on port ${PORT}`);
+      logger.log(`Environment: ${configs.app.env}`);
     });
   } catch (error) {
-    console.error('Failed to start server:', error);
+    logger.error('Failed to start server:', error);
     process.exit(1);
   }
 };
