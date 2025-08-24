@@ -4,7 +4,6 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { testAlias } from '@/utils';
 
 // Load environment variables
 dotenv.config();
@@ -33,7 +32,6 @@ app.get('/status', (_req, res) => {
   res.json({
     success: true,
     message: 'File Service Infrastructure is running',
-    aliasTest: testAlias(),
     timestamp: new Date().toISOString(),
   });
 });
@@ -54,7 +52,7 @@ const connectDB = async () => {
 const startServer = async () => {
   try {
     await connectDB();
-    
+
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);

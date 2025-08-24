@@ -13,10 +13,10 @@ afterAll(async () => {
 });
 
 // Extend Jest matchers if needed
-declare global {
-  namespace jest {
-    interface Matchers<R> {
-      // Custom matchers can be defined here
-    }
-  }
-}
+// declare global {
+//   namespace jest {
+//     interface Matchers<R> {
+//       // Custom matchers can be defined here
+//     }
+//   }
+// }
