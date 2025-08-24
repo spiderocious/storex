@@ -1,11 +1,13 @@
-import express from 'express';
-import cors from 'cors';
-import helmet from 'helmet';
-import rateLimit from 'express-rate-limit';
-import { config as dotEnvConfig } from 'dotenv';
-import mongoose from 'mongoose';
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { configs } from '@/configs';
 import { logger } from '@/utils';
+import { InternalServerErrorResponse } from '@/utils/response';
+import cors from 'cors';
+import { config as dotEnvConfig } from 'dotenv';
+import express, { Request, Response } from 'express';
+import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import mongoose from 'mongoose';
 
 dotEnvConfig();
 
@@ -26,6 +28,18 @@ app.use(limiter);
 // Body parsing middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use((err: unknown, req: Request, res: Response, next: any) => {
+  if (err) {
+    return InternalServerErrorResponse(res, 'Invalid JSON payload passed.');
+  }
+  next();
+});
+
+app.use((req: Request, _, next: any) => {
+  logger.log(`${req.method} ${req.url}`);
+  next();
+});
 
 // Health check endpoint
 app.get('/api/status', (_req, res) => {
