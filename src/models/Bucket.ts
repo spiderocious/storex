@@ -65,7 +65,6 @@ const BucketSchema = new Schema<IBucket>(
   }
 );
 
-// Pre-save hook to generate keys if not provided
 BucketSchema.pre<IBucket>('save', function (next) {
   if (!this.publicKey) {
     this.publicKey = `pub_${uuidv4().replace(/-/g, '')}`;
