@@ -5,8 +5,22 @@ import {
 } from '../impl/user.service.impl';
 import { userRepository } from '@/repositories/core/user.repository';
 import { IUser } from '@/models';
+import { getFromCache } from '../util/cache';
 
 class UserService implements UserServiceImpl {
+  async getUserByIDWithCache(userId: string): Promise<IUser | null> {
+    if (!userId || userId.trim() === '') {
+      throw new Error('User ID is required');
+    }
+
+    // Check cache first
+    const cachedUser = await getFromCache<IUser | null>(
+      userId,
+      this.getUserById.bind(this, userId)
+    );
+    return cachedUser;
+  }
+
   async getUserByEmail(email: string): Promise<IUser | null> {
     if (!email || email.trim() === '') {
       throw new Error('Email is required');

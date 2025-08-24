@@ -94,13 +94,16 @@ export class JWTUtils {
   /**
    * Verify refresh token
    */
-  static verifyRefreshToken(token: string): JWTPayload {
+  static verifyRefreshToken(token: string): JWTPayload & { expired: boolean } {
     try {
       const decoded = jwt.verify(token, configs.jwt.secret, {
         ...tokenOptions,
       }) as JWTPayload;
 
-      return decoded;
+      return {
+        ...decoded,
+        expired: this.isTokenExpired(token),
+      };
     } catch (error) {
       logger.warn('Invalid refresh token:', { error: (error as Error).message });
       throw new Error('Invalid or expired refresh token');

@@ -8,6 +8,7 @@ import express, { Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import mongoose from 'mongoose';
+import { validateR2Config } from './services/util/r2';
 
 dotEnvConfig();
 
@@ -69,6 +70,7 @@ const startServer = async () => {
     app.listen(PORT, () => {
       logger.log(`Server is running on port ${PORT}`);
       logger.log(`Environment: ${configs.app.env}`);
+      validateR2Config();
     });
   } catch (error) {
     logger.error('Failed to start server:', error);
