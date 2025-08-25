@@ -18,7 +18,6 @@ const upload = multer({
     cb(null, true);
   },
 });
-
 upload.single('file');
 
 export class PublicController {
@@ -79,7 +78,6 @@ export class PublicController {
   getDownloadUrl = controllerWrapper(
     async (req: PublicKeyRequest, res: Response): Promise<void> => {
       const fileId = req.params.fileId;
-      const bucket = req.bucket!; // Middleware ensures bucket exists
 
       if (!fileId || typeof fileId !== 'string') {
         throw new Error('fileId query parameter is required');
@@ -89,10 +87,6 @@ export class PublicController {
       const file = await fileService.getFileById(fileId);
       if (!file) {
         throw new Error('File not found');
-      }
-
-      if (file.bucketId !== bucket.id) {
-        throw new Error('File does not belong to this bucket');
       }
 
       // Cache key for download URL
@@ -134,6 +128,7 @@ export class PublicController {
   );
 
   // POST /api/v1/public/file/upload - file upload implementation
+
   uploadFile = controllerWrapper(async (req: PublicKeyRequest, res: Response): Promise<void> => {
     const bucket = req.bucket!; // Middleware ensures bucket exists
     const uploadedFile = req.file;
@@ -144,7 +139,7 @@ export class PublicController {
 
     // Extract file information from uploaded file
     const originalName = uploadedFile.originalname;
-    const fileType = uploadedFile.mimetype;
+    const fileType = originalName?.split('.').pop() ?? uploadedFile.mimetype;
     const fileSize = uploadedFile.size;
 
     // Generate filename or use provided one
@@ -173,17 +168,16 @@ export class PublicController {
     const r2Key = file.id;
 
     try {
-      // Upload file directly to R2
-      // Note: This is a simplified version. In production, you might want to use streams
-      // For now, we'll generate a presigned URL and simulate upload
-      const uploadUrl = await R2Helper.generatePresignedUploadUrl(r2Key, 300); // 5 minutes
+      const upload = await R2Helper.uploadFile(uploadedFile, r2Key);
 
-      // In a real implementation, you would:
-      // 1. Use the AWS SDK to put the object directly
-      // 2. Or use the presigned URL to upload the buffer
-      // For now, we'll return the upload information
+      if (!upload.success) {
+        throw new Error('Failed to upload file to R2');
+      }
+
+      const downloadUrl = await R2Helper.generatePresignedDownloadUrl(file.id, 3600);
 
       CreatedResponse(res, 'File uploaded successfully', {
+        downloadUrl,
         file: {
           id: file.id,
           name: file.name,
@@ -197,12 +191,7 @@ export class PublicController {
           id: bucket.id,
           name: bucket.name,
         },
-        upload: {
-          status: 'pending_r2_upload',
-          r2Key,
-          uploadUrl, // Client should use this URL to complete the upload
-          note: 'File record created. Use the uploadUrl to complete R2 upload.',
-        },
+        upload,
       });
     } catch (error) {
       // If R2 upload fails, we should delete the file record
@@ -214,7 +203,6 @@ export class PublicController {
   // GET /api/v1/public/file/download/:fileId - Stream file directly from R2
   downloadFile = controllerWrapper(async (req: PublicKeyRequest, res: Response): Promise<void> => {
     const fileId = req.params.fileId;
-    const bucket = req.bucket!; // Middleware ensures bucket exists
 
     if (!fileId || typeof fileId !== 'string') {
       throw new Error('fileId parameter is required');
@@ -224,10 +212,6 @@ export class PublicController {
     const file = await fileService.getFileById(fileId);
     if (!file) {
       throw new Error('File not found');
-    }
-
-    if (file.bucketId !== bucket.id) {
-      throw new Error('File does not belong to this bucket');
     }
 
     // Check if file exists in R2
@@ -266,7 +250,6 @@ export class PublicController {
   // GET /api/v1/public/file/info - Get file info by fileId
   getFileInfo = controllerWrapper(async (req: PublicKeyRequest, res: Response): Promise<void> => {
     const { fileId } = req.query;
-    const bucket = req.bucket!; // Middleware ensures bucket exists
 
     if (!fileId || typeof fileId !== 'string') {
       throw new Error('fileId query parameter is required');
@@ -276,10 +259,6 @@ export class PublicController {
     const file = await fileService.getFileById(fileId);
     if (!file) {
       throw new Error('File not found');
-    }
-
-    if (file.bucketId !== bucket.id) {
-      throw new Error('File does not belong to this bucket');
     }
 
     // Check if file exists in R2 using file ID as key
@@ -296,10 +275,6 @@ export class PublicController {
         metadata: file.metadata,
         createdAt: file.createdAt,
         updatedAt: file.updatedAt,
-      },
-      bucket: {
-        id: bucket.id,
-        name: bucket.name,
       },
       r2: {
         key: file.id,

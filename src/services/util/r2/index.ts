@@ -1,8 +1,12 @@
-import { S3Client } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
-import { PutObjectCommand, GetObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
-import { logger } from '@/utils/logger';
 import { configs } from '@/configs';
+import { logger } from '@/utils/logger';
+import {
+  DeleteObjectCommand,
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 const r2Config = configs.r2;
 // Validate R2 configuration
@@ -95,6 +99,28 @@ export class R2Helper {
         bucket: r2Config.bucketName,
       });
       throw new Error('Failed to generate upload URL');
+    }
+  }
+
+  static async uploadFile(file: any, fileKey: string): Promise<any> {
+    const uploadParams = {
+      Bucket: r2Config.bucketName,
+      Key: fileKey,
+      Body: file?.buffer,
+      ContentType: file?.mimetype,
+    };
+    const uploadCommand = new PutObjectCommand(uploadParams);
+    try {
+      const data = await this.client.send(uploadCommand);
+      return {
+        success: true,
+        data: data,
+      };
+    } catch (err) {
+      return {
+        error: err,
+        success: false,
+      };
     }
   }
 
