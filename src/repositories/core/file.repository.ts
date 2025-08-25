@@ -11,11 +11,11 @@ class FileRepository implements FileRepositoryImpl {
   }
 
   async updateFile(fileID: string, file: Partial<IFile>): Promise<IFile | null> {
-    return File.findByIdAndUpdate(fileID, file, { new: true });
+    return File.findOneAndUpdate({ id: fileID }, file, { new: true });
   }
 
   async deleteFile(fileID: string): Promise<boolean> {
-    const result = await File.findByIdAndDelete(fileID);
+    const result = await File.findOneAndDelete({ id: fileID });
     return result !== null;
   }
 
@@ -28,7 +28,7 @@ class FileRepository implements FileRepositoryImpl {
   }
 
   async incrementDownloads(fileID: string): Promise<IFile | null> {
-    return File.findByIdAndUpdate(fileID, { $inc: { downloads: 1 } }, { new: true });
+    return File.findOneAndUpdate({ id: fileID }, { $inc: { downloads: 1 } }, { new: true });
   }
 }
 

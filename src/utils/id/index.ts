@@ -13,9 +13,9 @@ export const generateID = (prefix = '', app: string = '') => {
     prefix +
     'xx' +
     app +
-    generateRandomString(12) +
+    generateRandomString(4) +
     userId +
-    generateRandomString(12) +
+    generateRandomString(6) +
     timestamp;
   return id
     ?.toUpperCase()

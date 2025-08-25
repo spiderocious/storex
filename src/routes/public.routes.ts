@@ -3,7 +3,6 @@ import { PublicKeyMiddleware } from '@/middleware/auth/public-key.middleware';
 import { RouteHandlerType } from '@/utils';
 import {
   getUploadUriValidation,
-  getDownloadUrlValidation,
   publicUploadFileValidation,
   getFileInfoValidation,
 } from '@/validators';
@@ -17,12 +16,18 @@ const baseRoutes: RouteHandlerType[] = [
     middlewares: [getUploadUriValidation],
   },
 
-  // GET /api/v1/public/file/download - Get download URL from Cloudflare R2
+  // GET /api/v1/public/file/download-uri - Get download URL from Cloudflare R2
   {
     method: 'get',
-    path: '/public/file/download',
+    path: '/public/file/download-uri/:fileId',
     handler: publicController.getDownloadUrl,
-    middlewares: [getDownloadUrlValidation],
+  },
+
+  // GET /api/v1/public/file/download - Stream file directly from Cloudflare R2
+  {
+    method: 'get',
+    path: '/public/file/download/:fileId',
+    handler: publicController.downloadFile,
   },
 
   // POST /api/v1/public/file/upload - Upload file to Cloudflare R2

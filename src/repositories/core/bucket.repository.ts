@@ -11,11 +11,11 @@ class BucketRepository implements BucketRepositoryImpl {
   }
 
   async updateBucket(bucketID: string, bucket: Partial<IBucket>): Promise<IBucket | null> {
-    return Bucket.findByIdAndUpdate(bucketID, bucket, { new: true });
+    return Bucket.findOneAndUpdate({ id: bucketID }, bucket, { new: true });
   }
 
   async deleteBucket(bucketID: string): Promise<boolean> {
-    const result = await Bucket.findByIdAndDelete(bucketID);
+    const result = await Bucket.findOneAndDelete({ id: bucketID });
     return result !== null;
   }
 
@@ -32,11 +32,11 @@ class BucketRepository implements BucketRepositoryImpl {
   }
 
   async incrementDownloadCount(bucketID: string): Promise<IBucket | null> {
-    return Bucket.findByIdAndUpdate(bucketID, { $inc: { downloadCount: 1 } }, { new: true });
+    return Bucket.findOneAndUpdate({ id: bucketID }, { $inc: { downloadCount: 1 } }, { new: true });
   }
 
   async incrementUploadCount(bucketID: string): Promise<IBucket | null> {
-    return Bucket.findByIdAndUpdate(bucketID, { $inc: { uploadCount: 1 } }, { new: true });
+    return Bucket.findOneAndUpdate({ id: bucketID }, { $inc: { uploadCount: 1 } }, { new: true });
   }
 
   async updateBucketStats(
@@ -44,8 +44,8 @@ class BucketRepository implements BucketRepositoryImpl {
     fileSizeDelta: number,
     fileCountDelta: number
   ): Promise<IBucket | null> {
-    return Bucket.findByIdAndUpdate(
-      bucketID,
+    return Bucket.findOneAndUpdate(
+      { id: bucketID },
       {
         $inc: {
           totalSize: fileSizeDelta,

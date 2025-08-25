@@ -183,6 +183,38 @@ export class R2Helper {
   }
 
   /**
+   * Get file stream from R2
+   */
+  static async getFileStream(r2Key: string) {
+    try {
+      const command = new GetObjectCommand({
+        Bucket: r2Config.bucketName,
+        Key: r2Key,
+      });
+
+      const response = await this.client.send(command);
+
+      if (!response.Body) {
+        throw new Error('File body is empty');
+      }
+
+      logger.info('File stream retrieved from R2', {
+        r2Key,
+        bucket: r2Config.bucketName,
+      });
+
+      return response.Body;
+    } catch (error) {
+      logger.error('Failed to get file stream from R2:', {
+        error: (error as Error).message,
+        r2Key,
+        bucket: r2Config.bucketName,
+      });
+      throw new Error('Failed to retrieve file from R2');
+    }
+  }
+
+  /**
    * Generate unique R2 key with date-based organization
    */
   static generateR2Key(userId: string, mediaId: string): string {

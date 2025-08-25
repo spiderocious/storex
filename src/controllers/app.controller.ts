@@ -53,6 +53,7 @@ export class AppController {
 
       // Verify bucket ownership
       const bucket = await bucketService.getBucketById(bucketId);
+      console.log(bucket, userId);
       if (bucket?.ownerId !== userId) {
         throw new Error('Bucket not found or access denied');
       }
@@ -142,7 +143,7 @@ export class AppController {
 
       CreatedResponse(res, 'File uploaded successfully', {
         file: {
-          id: file._id,
+          id: file.id,
           name: file.name,
           originalName: file.originalName,
           type: file.type,
@@ -190,7 +191,7 @@ export class AppController {
           totalApiCalls,
         },
         recentBuckets: buckets.slice(0, 5).map(bucket => ({
-          id: bucket._id,
+          id: bucket.id,
           name: bucket.name,
           fileCount: bucket.fileCount,
           totalSize: bucket.totalSize,

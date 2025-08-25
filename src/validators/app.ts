@@ -65,7 +65,6 @@ export const bucketIdValidation = [
   param('bucketId')
     .notEmpty()
     .withMessage('Bucket ID is required')
-    .isMongoId()
     .withMessage('Invalid bucket ID format'),
 ];
 
@@ -76,7 +75,6 @@ export const fileIdValidation = [
   param('fileId')
     .notEmpty()
     .withMessage('File ID is required')
-    .isMongoId()
     .withMessage('Invalid file ID format'),
 ];
 

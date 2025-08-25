@@ -3,6 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 
 export interface IFile extends Document {
   _id: string;
+  key: string;
   bucketId: string;
   name: string;
   originalName: string;
@@ -19,6 +20,11 @@ const FileSchema = new Schema<IFile>(
     id: {
       type: String,
       required: [true, 'File ID is required'],
+      unique: true,
+    },
+    key: {
+      type: String,
+      required: [true, 'File key is required'],
       unique: true,
     },
     bucketId: {

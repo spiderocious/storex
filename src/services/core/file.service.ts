@@ -32,6 +32,7 @@ class FileService implements FileServiceImpl {
     // Create file
     const newFile = await fileRepository.createFile({
       id: generateAppID('FILE'),
+      key: generateAppID('FILE_KEY'),
       bucketId,
       name,
       originalName,
