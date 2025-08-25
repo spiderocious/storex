@@ -21,6 +21,8 @@
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
+      "@/configs/*": ["src/configs/*"],
+      "@/constants/*": ["src/constants/*"],
       "@/controllers/*": ["src/controllers/*"],
       "@/services/*": ["src/services/*"],
       "@/repositories/*": ["src/repositories/*"],
@@ -29,7 +31,8 @@
       "@/routes/*": ["src/routes/*"],
       "@/utils/*": ["src/utils/*"],
       "@/types/*": ["src/types/*"],
-      "@/tests/*": ["tests/*"]
+      "@/tests/*": ["tests/*"],
+      "@/validators/*": ["src/validators/*"]
     },
     "typeRoots": ["./node_modules/@types", "./types", "./src/types", "./src/@types"],
     "types": ["node", "jest"]

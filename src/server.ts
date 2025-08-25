@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { configs } from '@/configs';
 import { logger } from '@/utils';
 import { InternalServerErrorResponse } from '@/utils/response';
 import cors from 'cors';
@@ -10,6 +9,7 @@ import helmet from 'helmet';
 import mongoose from 'mongoose';
 import { validateR2Config } from './services/util/r2';
 import { router } from './routes';
+import { configs } from '@/configs';
 
 dotEnvConfig();
 
