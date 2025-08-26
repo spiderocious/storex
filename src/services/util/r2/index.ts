@@ -129,7 +129,7 @@ export class R2Helper {
    */
   static async generatePresignedDownloadUrl(
     r2Key: string,
-    expiresIn: number = 3600 // 1 hour default
+    expiresIn: number = 520000
   ): Promise<string> {
     try {
       const command = new GetObjectCommand({
