@@ -97,7 +97,7 @@ export class PublicController {
         cacheKey,
         async () => {
           // Generate presigned download URL using file ID as R2 key
-          const downloadUrl = await R2Helper.generatePresignedDownloadUrl(file.id, 3600);
+          const downloadUrl = await R2Helper.generatePresignedDownloadUrl(file.id, 520000);
           return downloadUrl;
         },
         { expiresIn: 60 * 60 * 1000 } // 1 hour in milliseconds
@@ -174,7 +174,7 @@ export class PublicController {
         throw new Error('Failed to upload file to R2');
       }
 
-      const downloadUrl = await R2Helper.generatePresignedDownloadUrl(file.id, 3600);
+      const downloadUrl = await R2Helper.generatePresignedDownloadUrl(file.id, 520000);
 
       CreatedResponse(res, 'File uploaded successfully', {
         downloadUrl,
